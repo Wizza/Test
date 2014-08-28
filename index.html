@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ProWorkFlow Test</title>
+	
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
+	<link href="styles.css" rel="stylesheet" type="text/css" />
+	
+	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="projects.js"></script>
+	
+	<script>
+		$(document).ready(function(){
+			
+			// Get data from JSON Source, Once all requests are completed and promises resolved fire Done function
+			$.when(
+				$.get('projects.json'),
+				$.get('projectcat.json')
+			).done(function(projectsResult, projectCatsResult){
+				// Create a new instance of the Project "class"
+				// Can pass container element or default to body element
+				var projects = new Projects($('#projects'));
+				
+				// Assign stored data
+				projects.data.projects = projectsResult[0].job;
+				projects.data.projectCats = projectCatsResult[0].jobcategory;
+				
+				// Group Projects under Categories
+				projects.groupByCat();
+				
+				// Add generated HTML to DOM and display
+				projects.display();
+				
+				// Register any events, click event on Project Title - display extra Project Details
+				projects.registerEvents();
+				
+			}).fail(function(){
+				// One of the requests failed
+				console.log('One of the requests failed.');
+			});
+		});
+	</script>
+
+</head>
+<body>
+
+	<div id="projects"></div>
+	
+</body>
+</html>
